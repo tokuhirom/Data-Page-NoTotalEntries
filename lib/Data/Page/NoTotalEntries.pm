@@ -19,6 +19,30 @@ sub prev_page {
     $self->current_page > 1 ? $self->current_page - 1 : undef;
 }
 
+sub first {
+    my $self = shift;
+    Carp::croak("'first' method requires 'entries_on_this_page'") unless defined $self->entries_on_this_page;
+
+    if ( $self->entries_on_this_page == 0 ) {
+        return 0;
+    }
+    else {
+        return ( ( $self->current_page - 1 ) * $self->entries_per_page ) + 1;
+    }
+}
+
+sub last {
+    my $self = shift;
+    Carp::croak("'last' method requires 'entries_on_this_page'") unless defined $self->entries_on_this_page;
+
+    if ( !$self->has_next ) {
+        return $self->first + $self->entries_on_this_page;
+    }
+    else {
+        return ( $self->current_page * $self->entries_per_page );
+    }
+}
+
 1;
 __END__
 
@@ -69,6 +93,14 @@ it returns undefined:
 =item $pager->prev_page()
 
 This is a alias for C<< $pager->previous_page() >>
+
+=item $pager->first()
+
+This method returns the number of the first entry on the current page.
+
+=item $pager->last()
+
+This method returns the number of the last entry on the current page.
 
 =back
 
